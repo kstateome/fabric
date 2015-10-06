@@ -85,6 +85,7 @@ class OutputLooper(object):
             # Handle actual read
             try:
                 bytelist = self.read_func(self.read_size)
+                bytelist = bytelist.decode(encoding='UTF-8')
             except socket.timeout:
                 elapsed = time.time() - start
                 if self.timeout is not None and elapsed > self.timeout:

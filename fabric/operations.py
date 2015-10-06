@@ -1187,6 +1187,8 @@ def local(command, capture=False, shell=None):
         if dev_null is not None:
             dev_null.close()
     # Handle error condition (deal with stdout being None, too)
+    stdout = stdout.decode(encoding='UTF-8')
+    stderr = stderr.decode(encoding='UTF-8')
     out = _AttributeString(stdout.strip() if stdout else "")
     err = _AttributeString(stderr.strip() if stderr else "")
     out.command = given_command

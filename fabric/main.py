@@ -9,7 +9,7 @@ The other callables defined in this module are internal only. Anything useful
 to individuals leveraging Fabric as a library, should be kept elsewhere.
 """
 import getpass
-import collections
+from collections import Mapping
 from optparse import OptionParser
 import os
 import sys
@@ -364,7 +364,7 @@ def _sift_tasks(mapping):
     for name, value in mapping.items():
         if _is_task(name, value):
             tasks.append(name)
-        elif isinstance(value, collections.Mapping):
+        elif isinstance(value, Mapping):
             collections.append(name)
     tasks = sorted(tasks)
     collections = sorted(collections)
