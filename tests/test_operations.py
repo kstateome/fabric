@@ -599,7 +599,7 @@ class TestFileTransfers(FabricTest):
     @server(port=2201)
     def test_get_from_multiple_servers(self):
         ports = [2200, 2201]
-        hosts = map(lambda x: '127.0.0.1:%s' % x, ports)
+        hosts = list(map(lambda x: '127.0.0.1:%s' % x, ports))
         with settings(all_hosts=hosts):
             for port in ports:
                 with settings(
@@ -695,7 +695,7 @@ class TestFileTransfers(FabricTest):
         with hide('everything'):
             retval = get('tree', d)
         files = ['file1.txt', 'file2.txt', 'subfolder/file3.txt']
-        eq_(map(lambda x: os.path.join(d, 'tree', x), files), retval)
+        eq_(list(map(lambda x: os.path.join(d, 'tree', x), files)), retval)
 
     @server()
     def test_get_returns_none_for_stringio(self):
