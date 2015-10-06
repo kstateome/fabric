@@ -108,7 +108,7 @@ def test_abort_exception_contains_separate_message_and_code():
     # Re #1318 / #1213
     try:
         abort("Test")
-    except SystemExit as e:
+    except SystemExit  as e:
         eq_(e.message, "Test")
         eq_(e.code, 1)
 

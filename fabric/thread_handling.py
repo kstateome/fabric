@@ -10,8 +10,8 @@ class ThreadHandler(object):
         def wrapper(*args, **kwargs):
             try:
                 callable(*args, **kwargs)
-            except BaseException:
-                self.exception = sys.exc_info()
+            except BaseException as e:
+                self.exception = e
         # Kick off thread
         thread = threading.Thread(None, wrapper, name, args, kwargs)
         thread.setDaemon(True)
@@ -22,4 +22,4 @@ class ThreadHandler(object):
     def raise_if_needed(self):
         if self.exception:
             e = self.exception
-            raise e[0], e[1], e[2]
+            raise e

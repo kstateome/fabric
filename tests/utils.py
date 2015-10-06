@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 from fudge.patcher import with_patched_object
 from functools import partial
-from types import StringTypes
+import six
 import copy
 import getpass
 import os
@@ -101,7 +101,7 @@ def password_response(password, times_called=None, silent=True):
     """
     fake = Fake('getpass', callable=True)
     # Assume stringtype or iterable, turn into mutable iterable
-    if isinstance(password, StringTypes):
+    if isinstance(password, six.string_types):
         passwords = [password]
     else:
         passwords = list(password)

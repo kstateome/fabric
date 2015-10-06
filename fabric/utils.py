@@ -6,6 +6,15 @@ import os
 import sys
 import textwrap
 from traceback import format_exc
+from contextlib2 import ExitStack, contextmanager
+
+
+@contextmanager
+def py3_nested(*args):
+    with ExitStack() as stack:
+        for arg in args:
+            stack.enter_context(arg)
+        yield
 
 
 def _encode(msg, stream):

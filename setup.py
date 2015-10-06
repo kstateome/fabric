@@ -34,6 +34,10 @@ if sys.version_info[:2] < (2, 6):
 else:
     install_requires=['paramiko>=1.10']
 
+install_requires += [
+    'contextlib2',
+    'six',
+]
 
 setup(
     name='Fabric',

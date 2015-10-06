@@ -10,7 +10,11 @@ import sys
 import threading
 import time
 import types
-from StringIO import StringIO
+import six
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from functools import wraps
 from Python26SocketServer import BaseRequestHandler, ThreadingMixIn, TCPServer
 
@@ -408,7 +412,7 @@ def serve_responses(responses, files, passwords, home, pubkeys, port):
             stderr = ""
             status = 0
             sleep = 0
-            if isinstance(result, types.StringTypes):
+            if isinstance(result, six.string_types):
                 stdout = result
             else:
                 size = len(result)
@@ -489,6 +493,6 @@ def server(
                 # Handle subthread exceptions
                 e = worker.exception
                 if e:
-                    raise e[0], e[1], e[2]
+                    raise e
         return inner
     return run_server
