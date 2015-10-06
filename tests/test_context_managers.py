@@ -2,7 +2,10 @@ from __future__ import with_statement
 
 import os
 import sys
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from nose.tools import eq_, ok_
 

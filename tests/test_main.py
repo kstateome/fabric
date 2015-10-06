@@ -1,8 +1,8 @@
 from __future__ import with_statement
 
 import copy
+import collections
 from functools import partial
-from operator import isMappingType
 import os
 import sys
 from contextlib import contextmanager
@@ -35,7 +35,7 @@ def load_fabfile(*args, **kwargs):
 
 def test_argument_parsing():
     for args, output in [
-        # Basic 
+        # Basic
         ('abc', ('abc', [], {}, [], [], [])),
         # Arg
         ('ab:c', ('ab', ['c'], {}, [], [], [])),
@@ -586,8 +586,8 @@ def name_to_task(name):
 
 def strings_to_tasks(d):
     ret = {}
-    for key, value in d.iteritems():
-        if isMappingType(value):
+    for key, value in d.items():
+        if isinstance(value, collections.Mapping):
             val = strings_to_tasks(value)
         else:
             val = name_to_task(value)

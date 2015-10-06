@@ -5,6 +5,7 @@ import os
 import posixpath
 import stat
 import re
+import six
 from fnmatch import filter as fnfilter
 
 from fabric.state import output, connections, env
@@ -82,7 +83,7 @@ class SFTP(object):
             # Note that listdir and error are globals in this module due to
             # earlier import-*.
             names = self.ftp.listdir(top)
-        except Exception, err:
+        except Exception as err:
             if onerror is not None:
                 onerror(err)
             return
@@ -169,7 +170,7 @@ class SFTP(object):
                 # The user should always own the copied file.
                 sudo('chown %s "%s"' % (env.user, target_path))
                 # Only root and the user has the right to read the file
-                sudo('chmod %o "%s"' % (0400, target_path))
+                sudo('chmod %o "%s"' % (0o400, target_path))
                 remote_path = target_path
 
         try:
@@ -266,13 +267,13 @@ class SFTP(object):
         if (local_is_path and mirror_local_mode) or (mode is not None):
             lmode = os.stat(local_path).st_mode if mirror_local_mode else mode
             # Cast to octal integer in case of string
-            if isinstance(lmode, basestring):
+            if isinstance(lmode, six.string_types):
                 lmode = int(lmode, 8)
-            lmode = lmode & 07777
+            lmode = lmode & 0o7777
             rmode = rattrs.st_mode
             # Only bitshift if we actually got an rmode
             if rmode is not None:
-                rmode = (rmode & 07777)
+                rmode = (rmode & 0o7777)
             if lmode != rmode:
                 if use_sudo:
                     # Temporarily nuke 'cwd' so sudo() doesn't "cd" its mv
