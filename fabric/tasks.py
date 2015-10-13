@@ -200,10 +200,10 @@ def requires_parallel(task):
 
 
 def _parallel_tasks(commands_to_run):
-    return any(map(
+    return any(list(map(
         lambda x: requires_parallel(crawl(x[0], state.commands)),
         commands_to_run
-    ))
+    )))
 
 
 def _is_network_error_ignored():

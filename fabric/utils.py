@@ -7,6 +7,7 @@ import sys
 import textwrap
 from traceback import format_exc
 from contextlib2 import ExitStack, contextmanager
+import six
 
 
 @contextmanager
@@ -18,7 +19,7 @@ def py3_nested(*args):
 
 
 def _encode(msg, stream):
-    if isinstance(msg, unicode) and hasattr(stream, 'encoding') and not stream.encoding is None:
+    if six.PY2 and isinstance(msg, six.text_type) and hasattr(stream, 'encoding') and not stream.encoding is None:
         return msg.encode(stream.encoding)
     else:
         return str(msg)
