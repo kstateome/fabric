@@ -4,6 +4,7 @@
 *.pyt
 *.pytc
 *.egg
+*.egg-info
 .DS_Store
 .*.swp
 Fabric.egg-info
