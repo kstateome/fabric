@@ -41,7 +41,8 @@ install_requires += [
 
 setup(
     name='Fabric',
-    version=get_version('short'),
+    # version=get_version('short'),
+    version='1.10.2-0.2',
     description='Fabric is a simple, Pythonic tool for remote execution and deployment.',
     long_description=long_description,
     author='Jeff Forcier',
