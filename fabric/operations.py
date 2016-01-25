@@ -3,7 +3,7 @@
 Functions to be used in fabfiles and other non-core code, such as run()/sudo().
 """
 
-from __future__ import with_statement
+from __future__ import with_statement, unicode_literals
 
 import os
 import os.path
@@ -12,6 +12,7 @@ import re
 import subprocess
 import sys
 import time
+from six import text_type
 from glob import glob
 from contextlib import closing, contextmanager
 
@@ -49,13 +50,13 @@ def _shell_escape(string):
     return string
 
 
-class _AttributeString(str):
+class _AttributeString(text_type):
     """
     Simple string subclass to allow arbitrary attribute access.
     """
     @property
     def stdout(self):
-        return str(self)
+        return text_type(self)
 
 
 class _AttributeList(list):
@@ -129,7 +130,7 @@ def require(*keys, **kwargs):
             command = "one of the following commands"
         else:
             command = "the following command"
-        to_s = lambda obj: getattr(obj, '__name__', str(obj))
+        to_s = lambda obj: getattr(obj, '__name__', text_type(obj))
         provided_by = [to_s(obj) for obj in funcs]
         msg += "\n\nTry running %s prior to this one, to fix the problem:\n%s"\
             % (command, indent(provided_by))
@@ -203,7 +204,7 @@ def prompt(text, key=None, default='', validate=None):
     # Set up default display
     default_str = ""
     if default != '':
-        default_str = " [%s] " % str(default).strip()
+        default_str = " [%s] " % text_type(default).strip()
     else:
         default_str = " "
     # Construct full prompt string
@@ -600,7 +601,7 @@ def get(remote_path, local_path=None, use_sudo=False, temp_dir=""):
 def _sudo_prefix_argument(argument, value):
     if value is None:
         return ""
-    if str(value).isdigit():
+    if text_type(value).isdigit():
         value = "#%s" % value
     return ' %s "%s"' % (argument, value)
 
