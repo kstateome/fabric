@@ -6,6 +6,7 @@ import re
 import socket
 from select import select
 from six import text_type, binary_type
+from collections import deque
 
 from fabric.state import env, output, win32
 from fabric.auth import get_password, set_password
@@ -33,7 +34,6 @@ def output_loop(*args, **kwargs):
     OutputLooper(*args, **kwargs).loop()
 
 
-from collections import deque
 class PartialUnicodeParser(object):
     def __init__(self):
         self.byte_list = deque()
@@ -110,7 +110,6 @@ class OutputLooper(object):
             # Handle actual read
             try:
                 bytelist = self.read_func(self.read_size)
-                # bytelist = bytelist.decode(encoding='UTF-8')
             except socket.timeout:
                 elapsed = time.time() - start
                 if self.timeout is not None and elapsed > self.timeout:
@@ -125,7 +124,6 @@ class OutputLooper(object):
                 break
             # A None capture variable implies that we're in open_shell()
 
-            # bytelist = bytelist.decode('UTF-8')  # HERE
             partial_unicode_buffer.add(bytelist)
             bytelist = partial_unicode_buffer.get()
             if len(bytelist) is 0:
