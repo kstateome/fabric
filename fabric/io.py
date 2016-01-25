@@ -1,10 +1,11 @@
-from __future__ import with_statement
+from __future__ import with_statement, absolute_import, unicode_literals
 
 import sys
 import time
 import re
 import socket
 from select import select
+from six import text_type, binary_type
 
 from fabric.state import env, output, win32
 from fabric.auth import get_password, set_password
@@ -30,6 +31,28 @@ def _has_newline(bytelist):
 
 def output_loop(*args, **kwargs):
     OutputLooper(*args, **kwargs).loop()
+
+
+from collections import deque
+class PartialUnicodeParser(object):
+    def __init__(self):
+        self.byte_list = deque()
+
+    def get(self):
+        if len(self.byte_list) is 0:
+            return ''
+        else:
+            maybe_text = b''
+            for _ in range(len(self.byte_list)):
+                maybe_text += self.byte_list.popleft()
+            try:
+                return maybe_text.decode('UTF-8')
+            except UnicodeDecodeError:
+                self.byte_list.appendleft(maybe_text)
+                return ''
+
+    def add(self, stuff):
+        self.byte_list.append(stuff)
 
 
 class OutputLooper(object):
@@ -67,6 +90,8 @@ class OutputLooper(object):
         (Timeouts before then are considered part of normal short-timeout fast
         network reading; see Fabric issue #733 for background.)
         """
+        partial_unicode_buffer = PartialUnicodeParser()
+
         # Internal capture-buffer-like buffer, used solely for state keeping.
         # Unlike 'capture', nothing is ever purged from this.
         _buffer = []
@@ -85,20 +110,27 @@ class OutputLooper(object):
             # Handle actual read
             try:
                 bytelist = self.read_func(self.read_size)
-                bytelist = bytelist.decode(encoding='UTF-8')
+                # bytelist = bytelist.decode(encoding='UTF-8')
             except socket.timeout:
                 elapsed = time.time() - start
                 if self.timeout is not None and elapsed > self.timeout:
                     raise CommandTimeout(timeout=self.timeout)
                 continue
             # Empty byte == EOS
-            if bytelist == '':
+            if len(bytelist) is 0:
                 # If linewise, ensure we flush any leftovers in the buffer.
                 if self.linewise and line:
                     self._flush(self.prefix)
                     self._flush("".join(line))
                 break
             # A None capture variable implies that we're in open_shell()
+
+            # bytelist = bytelist.decode('UTF-8')  # HERE
+            partial_unicode_buffer.add(bytelist)
+            bytelist = partial_unicode_buffer.get()
+            if len(bytelist) is 0:
+                continue
+
             if self.capture is None:
                 # Just print directly -- no prefixes, no capturing, nada
                 # And since we know we're using a pty in this mode, just go
@@ -157,7 +189,7 @@ class OutputLooper(object):
                     expected, response = self._get_prompt_response()
                     if expected:
                         del self.capture[-1 * len(expected):]
-                        self.chan.sendall(str(response) + '\n')
+                        self.chan.sendall(text_type(response) + '\n')
                     else:
                         prompt = _endswith(self.capture, env.sudo_prompt)
                         try_again = (_endswith(self.capture, env.again_prompt + '\n')
