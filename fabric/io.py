@@ -73,13 +73,14 @@ class OutputLooper(object):
         self.write_buffer = RingBuffer([], maxlen=len(self.prefix))
 
     def _flush(self, text):
-        self.stream.write(text)
+        correct_text = text.encode(self.stream.encoding, errors='ignore')
+        self.stream.write(correct_text)
         # Actually only flush if not in linewise mode.
         # When linewise is set (e.g. in parallel mode) flushing makes
         # doubling-up of line prefixes, and other mixed output, more likely.
         if not env.linewise:
             self.stream.flush()
-        self.write_buffer.extend(text)
+        self.write_buffer.extend(correct_text)
 
     def loop(self):
         """
