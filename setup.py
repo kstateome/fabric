@@ -42,7 +42,7 @@ install_requires += [
 setup(
     name='k-state-fabric-3',
     # version=get_version('short'),
-    version='1.10.2.post8',
+    version='1.10.2.post9',
     description='Fabric is a simple, Pythonic tool for remote execution and deployment.',
     long_description=long_description,
     author='Jeff Forcier',
