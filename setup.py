@@ -32,7 +32,7 @@ For more information, please see the Fabric website or execute ``fab --help``.
 if sys.version_info[:2] < (2, 6):
     install_requires=['paramiko>=1.10,<1.13']
 else:
-    install_requires=['paramiko>=1.10']
+    install_requires=['paramiko>=1.10,<2.0']
 
 install_requires += [
     'contextlib2',
@@ -42,7 +42,7 @@ install_requires += [
 setup(
     name='k-state-fabric-3',
     # version=get_version('short'),
-    version='1.10.2.post8',
+    version='1.10.2.post9',
     description='Fabric is a simple, Pythonic tool for remote execution and deployment.',
     long_description=long_description,
     author='Jeff Forcier',
